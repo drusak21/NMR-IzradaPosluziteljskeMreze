@@ -10,6 +10,16 @@ h1, h2 {
     color: #333;
 }
 
+footer {
+    background-color: #dbdbdb;
+    color: #fff;
+    text-align: center;
+    padding: 10px 0;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
 p {
     text-align: center;
     font-size: 18px;
@@ -56,7 +66,6 @@ p {
 a {
     display: block;
     text-align: center;
-    margin-top: 20px;
     color: #0056b3;
     text-decoration: none;
 }
@@ -95,4 +104,39 @@ button {
 }
 button:hover {
     background-color: #218838;
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    background-color: #dbdbdb;
+    padding: 5px 0;
+}
+
+nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+nav ul li {
+    margin: 0 20px; 
+}
+
+nav ul li a {
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+    font-size: 18px;
+    padding: 8px 16px;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+}
+
+nav ul li a:hover {
+    background-color: #0056b3;
+    border-radius: 4px;
+    text-decoration: none;
+    color:white;
 }
