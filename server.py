@@ -1,6 +1,7 @@
 import socket
 import threading
 import urllib.parse
+import json
 
 def load_html(file_name):
     try:
@@ -39,27 +40,26 @@ def handle_client(client_socket):
 
         elif method == "POST":
             if path == "/dodaj-auto":
-                # Pronađite sadržaj tijela zahtjeva (POST podaci)
                 body = request.split("\r\n\r\n")[1]
-
-                # Dekodirajte URL-enkodirane podatke
                 data = urllib.parse.parse_qs(body)
+                
                 proizvodac = data.get("proizvodac", [""])[0]
                 model = data.get("model", [""])[0]
                 godina = data.get("godina", [""])[0]
                 boja = data.get("boja", [""])[0]
                 cijena = data.get("cijena", [""])[0]
 
-                # HTML odgovor za prikaz spremljenih podataka
-                response = "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\n\r\n" + \
-                           f"<html><link rel='stylesheet' href='styles.css'><body><h1>Auto spremljen!</h1>" + \
-                           f"<div class='carData'>"+\
-                           f"<p>Proizvodac:{proizvodac}</p>"+\
-                           f"<p>Model:{model}</p>"+\
-                           f"<p>Godina: ({godina})</p>"+\
-                           f"<p>Boja: {boja}</p>"+\
-                           f"<p>Cijena: {cijena} €</p></body></html>"+\
-                           f"</div>"
+                car_data = {
+                    "proizvodac": proizvodac,
+                    "model": model,
+                    "godina": godina,
+                    "boja": boja,
+                    "cijena": cijena
+                }
+
+                response_body = json.dumps({"message": "Auto spremljen!", "car_data": car_data}, ensure_ascii=False, indent=4)
+
+                response = "HTTP/1.1 200 OK\r\nContent-Type: application/json; charset=utf-8\r\n\r\n" + response_body
 
             else:
                 response = "HTTP/1.1 404 Not Found\r\nContent-Type: text/html; charset=utf-8\r\n\r\n" + \
