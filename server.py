@@ -1,6 +1,20 @@
 import socket
 import threading
 
+def load_html(file_name):
+    try:
+        with open(file_name, 'r', encoding='utf-8') as f:
+            return f.read()
+    except Exception as e:
+        return f"Greška pri učitavanju datoteke: {e}"
+
+def load_css(file_name):
+    try:
+        with open(file_name, 'r', encoding='utf-8') as f:
+            return f.read()
+    except Exception as e:
+        return f"Greška pri učitavanju datoteke: {e}"
+
 def handle_client(client_socket):
     request = client_socket.recv(1024).decode()
     print(f"Primljeni zahtjev: {request}")
@@ -10,22 +24,21 @@ def handle_client(client_socket):
 
     if method == "GET":
         if path == "/":
-            response = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n" \
-                       "<html><body><h1>Dobrodosli na pocetnu stranicu!</h1>" \
-                       "<a href='/about'>O nama</a></body></html>"
+            response = "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\n\r\n" + load_html("index.html")
         elif path == "/about":
-            response = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n" \
-                       "<html><body><h1>O nama</h1><p>Ovo je testna stranica.</p></body></html>"
+            response = "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\n\r\n" + load_html("about.html")
+        elif path == "/styles.css": 
+            response = "HTTP/1.1 200 OK\r\nContent-Type: text/css; charset=utf-8\r\n\r\n" + load_css("styles.css")
         else:
-            response = "HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\n\r\n" \
+            response = "HTTP/1.1 404 Not Found\r\nContent-Type: text/html; charset=utf-8\r\n\r\n" + \
                        "<html><body><h1>404 - Stranica nije pronađena</h1></body></html>"
 
     elif method == "POST":
-        response = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n" \
+        response = "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\n\r\n" + \
                    "<html><body><h1>Podaci uspješno primljeni!</h1></body></html>"
 
     else:
-        response = "HTTP/1.1 405 Method Not Allowed\r\nContent-Type: text/html\r\n\r\n" \
+        response = "HTTP/1.1 405 Method Not Allowed\r\nContent-Type: text/html; charset=utf-8\r\n\r\n" + \
                    "<html><body><h1>405 - Metoda nije dopuštena</h1></body></html>"
 
     client_socket.send(response.encode())
