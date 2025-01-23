@@ -18,6 +18,7 @@ def load_css(file_name):
         return f"Greška pri učitavanju datoteke: {e}"
 
 def handle_client(client_socket):
+    response = ""
     try:
         request = client_socket.recv(1024).decode()
         print(f"Primljeni zahtjev:\n{request}")
@@ -34,6 +35,17 @@ def handle_client(client_socket):
                 response = "HTTP/1.1 200 OK\r\nContent-Type: text/css; charset=utf-8\r\n\r\n" + load_css("styles.css")
             elif path == "/addcar":
                 response = "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\n\r\n" + load_html("addNewCar.html")
+            elif path.startswith("/images/"): 
+                image_path = "." + path 
+                try:
+                    with open(image_path, 'rb') as img_file:
+                        image_data = img_file.read()
+                    client_socket.send(f"HTTP/1.1 200 OK\r\nContent-Type: image/jpeg\r\n\r\n".encode())
+                    client_socket.send(image_data)
+                    return 
+                except Exception as e:
+                    response = "HTTP/1.1 404 Not Found\r\nContent-Type: text/html; charset=utf-8\r\n\r\n" + \
+                               "<html><body><h1>404 - Slika nije pronađena</h1></body></html>"
             else:
                 response = "HTTP/1.1 404 Not Found\r\nContent-Type: text/html; charset=utf-8\r\n\r\n" + \
                            "<html><body><h1>404 - Stranica nije pronađena</h1></body></html>"
@@ -78,7 +90,24 @@ def store_car_info(request):
 
     response_body = json.dumps({"message": "Auto spremljen!", "car_data": car_data}, ensure_ascii=False, indent=4)
 
-    return "HTTP/1.1 200 OK\r\nContent-Type: application/json; charset=utf-8\r\n\r\n" + response_body
+                response = "HTTP/1.1 200 OK\r\nContent-Type: application/json; charset=utf-8\r\n\r\n" + response_body
+
+            else:
+                response = "HTTP/1.1 404 Not Found\r\nContent-Type: text/html; charset=utf-8\r\n\r\n" + \
+                           "<html><body><h1>404 - Stranica nije pronađena</h1></body></html>"
+
+        else:
+            response = "HTTP/1.1 405 Method Not Allowed\r\nContent-Type: text/html; charset=utf-8\r\n\r\n" + \
+                       "<html><body><h1>405 - Metoda nije dopuštena</h1></body></html>"
+
+        if response: 
+            client_socket.send(response.encode())
+
+    except Exception as e:
+        print(f"Dogodila se greška: {e}")
+    finally:
+        client_socket.close()
+
 
 def start_server():
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

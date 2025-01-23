@@ -140,3 +140,19 @@ nav ul li a:hover {
     text-decoration: none;
     color:white;
 }
+
+.car-item img {
+    width: 100%; 
+    height: auto; 
+    border-radius: 8px; 
+    margin-bottom: 15px; 
+}
+
+.car-item {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.car-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
