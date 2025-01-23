@@ -53,8 +53,6 @@ def handle_client(client_socket):
         elif method == "POST":
             if path == "/dodaj-auto":
                 response=store_car_info(request)
-
-
             else:
                 response = "HTTP/1.1 404 Not Found\r\nContent-Type: text/html; charset=utf-8\r\n\r\n" + \
                            "<html><body><h1>404 - Stranica nije pronađena</h1></body></html>"
@@ -92,7 +90,7 @@ def store_car_info(request):
                 }
 
     response_body = json.dumps({"message": "Auto spremljen!", "car_data": car_data}, ensure_ascii=False, indent=4)
-    return response_body
+    return "HTTP/1.1 200 OK\r\nContent-Type: application/json; charset=utf-8\r\n\r\n" + response_body
             
 
 
