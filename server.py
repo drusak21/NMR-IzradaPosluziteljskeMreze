@@ -54,6 +54,7 @@ def handle_client(client_socket):
             if path == "/dodaj-auto":
                 response=store_car_info(request)
 
+
             else:
                 response = "HTTP/1.1 404 Not Found\r\nContent-Type: text/html; charset=utf-8\r\n\r\n" + \
                            "<html><body><h1>404 - Stranica nije pronađena</h1></body></html>"
@@ -62,12 +63,14 @@ def handle_client(client_socket):
             response = "HTTP/1.1 405 Method Not Allowed\r\nContent-Type: text/html; charset=utf-8\r\n\r\n" + \
                        "<html><body><h1>405 - Metoda nije dopuštena</h1></body></html>"
 
-        client_socket.send(response.encode())
+        if response: 
+            client_socket.send(response.encode())
 
     except Exception as e:
         print(f"Dogodila se greška: {e}")
     finally:
         client_socket.close()
+
 
 def store_car_info(request):
     body = request.split("\r\n\r\n")[1]
@@ -89,24 +92,8 @@ def store_car_info(request):
                 }
 
     response_body = json.dumps({"message": "Auto spremljen!", "car_data": car_data}, ensure_ascii=False, indent=4)
-
-                response = "HTTP/1.1 200 OK\r\nContent-Type: application/json; charset=utf-8\r\n\r\n" + response_body
-
-            else:
-                response = "HTTP/1.1 404 Not Found\r\nContent-Type: text/html; charset=utf-8\r\n\r\n" + \
-                           "<html><body><h1>404 - Stranica nije pronađena</h1></body></html>"
-
-        else:
-            response = "HTTP/1.1 405 Method Not Allowed\r\nContent-Type: text/html; charset=utf-8\r\n\r\n" + \
-                       "<html><body><h1>405 - Metoda nije dopuštena</h1></body></html>"
-
-        if response: 
-            client_socket.send(response.encode())
-
-    except Exception as e:
-        print(f"Dogodila se greška: {e}")
-    finally:
-        client_socket.close()
+    return response_body
+            
 
 
 def start_server():
