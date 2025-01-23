@@ -40,26 +40,7 @@ def handle_client(client_socket):
 
         elif method == "POST":
             if path == "/dodaj-auto":
-                body = request.split("\r\n\r\n")[1]
-                data = urllib.parse.parse_qs(body)
-                
-                proizvodac = data.get("proizvodac", [""])[0]
-                model = data.get("model", [""])[0]
-                godina = data.get("godina", [""])[0]
-                boja = data.get("boja", [""])[0]
-                cijena = data.get("cijena", [""])[0]
-
-                car_data = {
-                    "proizvodac": proizvodac,
-                    "model": model,
-                    "godina": godina,
-                    "boja": boja,
-                    "cijena": cijena
-                }
-
-                response_body = json.dumps({"message": "Auto spremljen!", "car_data": car_data}, ensure_ascii=False, indent=4)
-
-                response = "HTTP/1.1 200 OK\r\nContent-Type: application/json; charset=utf-8\r\n\r\n" + response_body
+                response=store_car_info(request)
 
             else:
                 response = "HTTP/1.1 404 Not Found\r\nContent-Type: text/html; charset=utf-8\r\n\r\n" + \
@@ -75,6 +56,29 @@ def handle_client(client_socket):
         print(f"Dogodila se greška: {e}")
     finally:
         client_socket.close()
+
+def store_car_info(request):
+    body = request.split("\r\n\r\n")[1]
+    print("store_info",request.split("\r\n"))
+    data = urllib.parse.parse_qs(body)
+                
+    proizvodac = data.get("proizvodac", [""])[0]
+    model = data.get("model", [""])[0]
+    godina = data.get("godina", [""])[0]
+    boja = data.get("boja", [""])[0]
+    cijena = data.get("cijena", [""])[0]
+
+    car_data = {
+                    "proizvodac": proizvodac,
+                    "model": model,
+                    "godina": godina,
+                    "boja": boja,
+                    "cijena": cijena
+                }
+
+    response_body = json.dumps({"message": "Auto spremljen!", "car_data": car_data}, ensure_ascii=False, indent=4)
+
+    return "HTTP/1.1 200 OK\r\nContent-Type: application/json; charset=utf-8\r\n\r\n" + response_body
 
 def start_server():
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
